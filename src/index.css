@@ -1,0 +1,23 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.location-pin {
+  filter: drop-shadow(0 1px 4px rgba(0,0,0,0.2));
+  background-color: #4f46e5;
+  border-radius: 50%;
+}
+
+.leaflet-routing-container {
+  background-color: white;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  max-height: 300px;
+  overflow-y: auto;
+  font-family: ui-sans-serif, system-ui, sans-serif;
+}
+
+.leaflet-routing-alt {
+  max-height: none !important;
+}
