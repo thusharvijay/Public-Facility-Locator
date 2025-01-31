@@ -14,7 +14,12 @@ export default function ToiletDetails({ toilet, onClose, onReviewSubmit }: Toile
 
   const handleReviewSubmit = (review: Omit<Review, 'id' | 'date' | 'status'>) => {
     if (onReviewSubmit) {
-      onReviewSubmit(toilet.id, review);
+      onReviewSubmit(toilet.id, {
+        ...review,
+        id: Math.random().toString(36).substr(2, 9),
+        date: new Date().toISOString(),
+        status: 'approved' // Change this if you want pending reviews
+      });
     }
     setShowReviewForm(false);
   };

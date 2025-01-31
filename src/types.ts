@@ -25,3 +25,13 @@ export interface ToiletLocation {
   showers: boolean;
   reviews: Review[];
 }
+
+export interface CommunityOpinion {
+  id: string;
+  userName: string;
+  content: string;
+  date: string;
+  likes: number;
+  dislikes: number;
+  userReaction?: 'like' | 'dislike';
+}

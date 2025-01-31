@@ -12,9 +12,10 @@ interface ToiletListProps {
     showers: boolean | null;
     minRating: number;
   };
+  userLocation: { lat: number; lng: number } | null;
 }
 
-export default function ToiletList({ toilets, onToiletSelect, filters }: ToiletListProps) {
+export default function ToiletList({ toilets, onToiletSelect, filters, userLocation }: ToiletListProps) {
   const filteredToilets = toilets.filter(toilet => {
     if (filters.paid !== null && toilet.paid !== filters.paid) return false;
     if (filters.wheelchairAccessible && !toilet.wheelchairAccessible) return false;
@@ -23,6 +24,24 @@ export default function ToiletList({ toilets, onToiletSelect, filters }: ToiletL
     if (toilet.hygieneRating < filters.minRating) return false;
     return true;
   });
+
+  const getDistance = (toilet: ToiletLocation) => {
+    if (!userLocation) return null;
+    
+    const R = 6371; // Earth's radius in km
+    const dLat = (toilet.position.lat - userLocation.lat) * Math.PI / 180;
+    const dLon = (toilet.position.lng - userLocation.lng) * Math.PI / 180;
+    const a = 
+      Math.sin(dLat/2) * Math.sin(dLat/2) +
+      Math.cos(userLocation.lat * Math.PI / 180) * Math.cos(toilet.position.lat * Math.PI / 180) * 
+      Math.sin(dLon/2) * Math.sin(dLon/2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    const distance = R * c;
+    
+    return distance < 1 
+      ? `${Math.round(distance * 1000)}m`
+      : `${distance.toFixed(1)}km`;
+  };
 
   return (
     <div className="space-y-4">
@@ -34,13 +53,20 @@ export default function ToiletList({ toilets, onToiletSelect, filters }: ToiletL
         >
           <div className="flex justify-between items-start">
             <h3 className="font-semibold text-lg">{toilet.name}</h3>
-            <span className={`text-sm px-2 py-1 rounded ${
-              toilet.paid 
-                ? 'bg-blue-100 text-blue-800'
-                : 'bg-green-100 text-green-600'
-            }`}>
-              {toilet.paid ? toilet.price : 'Free'}
-            </span>
+            <div className="flex flex-col items-end gap-1">
+              <span className={`text-sm px-2 py-1 rounded ${
+                toilet.paid 
+                  ? 'bg-blue-100 text-blue-800'
+                  : 'bg-green-100 text-green-600'
+              }`}>
+                {toilet.paid ? toilet.price : 'Free'}
+              </span>
+              {userLocation && (
+                <span className="text-sm text-gray-500">
+                  {getDistance(toilet)}
+                </span>
+              )}
+            </div>
           </div>
           
           <div className="flex items-center gap-2 mt-2">
